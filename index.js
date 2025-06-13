@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { connectDatabase } from "./database/database.js";
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 const port = 4000;
@@ -12,6 +13,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.use("/api", userRoutes)
 
 app.get("/", (req, res) => {
     res.json({

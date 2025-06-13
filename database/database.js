@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
     database: "postgres", // Replace with your PostgreSQL database name
     
     synchronize: true, // Set to false in production
-    logging: true,
+    logging: false,
     entities: ["./entities/*.js"], // Path to your entity files
 
 });

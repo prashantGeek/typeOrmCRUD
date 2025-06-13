@@ -1,0 +1,109 @@
+### Test Server Health
+GET http://localhost:4000/
+
+###
+
+### Create a new user
+POST http://localhost:4000/api/users
+Content-Type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "password": "password123",
+    "age": 25
+}
+
+###
+
+### Create another user
+POST http://localhost:4000/api/users
+Content-Type: application/json
+
+{
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "email": "jane.smith@example.com",
+    "password": "securepass456",
+    "age": 30
+}
+
+###
+
+### Get all users
+GET http://localhost:4000/api/users
+
+###
+
+### Get user by ID (replace 1 with actual user ID)
+GET http://localhost:4000/api/users/1
+
+###
+
+### Update user by ID (replace 1 with actual user ID)
+PUT http://localhost:4000/api/users/1
+Content-Type: application/json
+
+{
+    "firstName": "John Updated",
+    "lastName": "Doe Updated",
+    "age": 26
+}
+
+###
+
+### Update user email (replace 1 with actual user ID)
+PUT http://localhost:4000/api/users/1
+Content-Type: application/json
+
+{
+    "email": "john.updated@example.com"
+}
+
+###
+
+### Update user status (replace 1 with actual user ID)
+PUT http://localhost:4000/api/users/1
+Content-Type: application/json
+
+{
+    "isActive": false
+}
+
+###
+
+### Delete user by ID (replace 1 with actual user ID)
+DELETE http://localhost:4000/api/users/1
+
+###
+
+### Test with invalid user ID (should return 404)
+GET http://localhost:4000/api/users/999
+
+###
+
+### Test creating user with duplicate email (should return error)
+POST http://localhost:4000/api/users
+Content-Type: application/json
+
+{
+    "firstName": "Test",
+    "lastName": "User",
+    "email": "john.doe@example.com",
+    "password": "password123",
+    "age": 28
+}
+
+###
+
+### Test creating user with missing required fields (should return error)
+POST http://localhost:4000/api/users
+Content-Type: application/json
+
+{
+    "firstName": "Incomplete",
+    "email": "incomplete@example.com"
+}
+
+###
