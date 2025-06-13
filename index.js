@@ -1,0 +1,35 @@
+import express from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import bodyParser from "body-parser";
+import { connectDatabase } from "./database/database.js";
+
+const app = express();
+const port = 4000;
+
+// Correctly invoke middleware functions
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+app.get("/", (req, res) => {
+    res.json({
+        message: "Server is running",
+    });
+});
+
+// Initialize database connection and start server
+const startServer = async () => {
+    try {
+        await connectDatabase();
+        app.listen(port, () => {
+            console.log(`Server running on port ${port}`);
+        });
+    } catch (error) {
+        console.error("Failed to start server:", error);
+        process.exit(1);
+    }
+};
+
+startServer();
