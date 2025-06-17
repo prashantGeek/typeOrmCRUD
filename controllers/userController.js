@@ -13,7 +13,9 @@ export const createUser = async (req,res)=>{
             lastName,
             email,
             password,
-            age 
+            ag
+
+
         })
         const savedUser = await userRepository.save(newUser)
         res.status(201).json({savedUser})
