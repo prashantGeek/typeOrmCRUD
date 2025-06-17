@@ -68,7 +68,7 @@ PUT http://localhost:4000/api/users/1
 Content-Type: application/json
 
 {
-    "isActive": false
+    "isActive": true
 }
 
 ###

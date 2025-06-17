@@ -2,11 +2,15 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import bodyParser from "body-parser";
+import dotenv from "dotenv";
 import { connectDatabase } from "./database/database.js";
 import userRoutes from "./routes/userRoutes.js";
 
+// Load environment variables
+dotenv.config();
+
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 
 // Correctly invoke middleware functions
 app.use(cors());

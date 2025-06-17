@@ -24,6 +24,7 @@
     "typeorm": "^0.3.24"
   },
   "devDependencies": {
-    "@types/pg": "^8.15.4"
+    "@types/pg": "^8.15.4",
+    "dotenv": "^16.5.0"
   }
 }
