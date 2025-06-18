@@ -4,21 +4,27 @@ import { User } from "../entities/User.js";
 const userRepository = AppDataSource.getRepository(User);
 
 //create a new user
-
 export const createUser = async (req,res)=>{
     try{
         const {firstName, lastName, email, password, age} = req.body;
+        
+        // Check if user already exists
+        const existingUser = await userRepository.findOneBy({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: "User with this email already exists" });
+        }
+        
         const newUser = userRepository.create({
             firstName,
             lastName,
             email,
             password,
-            age
-
-
-        })
-        const savedUser = await userRepository.save(newUser)
-        res.status(201).json({savedUser})
+            age,
+            provider: "local"
+        });
+        
+        const savedUser = await userRepository.save(newUser);
+        res.status(201).json({savedUser});
     } catch(error){
         res.status(400).json({error: error.message});
     }
@@ -35,7 +41,6 @@ export const getAllUsers = async (req,res)=>{
 }
 
 //Get user by ID
-
 export const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -50,11 +55,15 @@ export const getUserById = async (req, res) => {
 };
 
 //update user by ID
-
 export const updateUser = async (req,res)=>{
     try{
         const {id} = req.params
         const updateData = req.body
+        
+        // Don't allow updating googleId or provider through this endpoint
+        delete updateData.googleId;
+        delete updateData.provider;
+        
         const result = await userRepository.update(id, updateData)
 
         if (result.affected === 0){
@@ -65,11 +74,9 @@ export const updateUser = async (req,res)=>{
     }catch(error){
         res.status(400).json({error: error.message});
     }
-
 }
 
 //delete user by ID
-
 export const deleteUser = async (req, res) => {
     try{
         const {id}= req.params
