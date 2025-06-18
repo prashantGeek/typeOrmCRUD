@@ -1,85 +1,36 @@
-# TypeORM CRUD Frontend
-
-This is the React frontend for the TypeORM CRUD application with Google Authentication.
-
-## Features
-
-- Google OAuth Authentication
-- User Dashboard
-- User Management (View, Delete)
-- Protected Routes
-- Responsive Design
-- Session Management
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-### Prerequisites
+First, run the development server:
 
-- Node.js (v14 or higher)
-- npm or yarn
-
-### Installation
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm start
-   ```
-
-The application will run on `http://localhost:3000` and will proxy API requests to the backend running on `http://localhost:4000`.
-
-## Available Scripts
-
-- `npm start` - Starts the development server
-- `npm run build` - Builds the app for production
-- `npm test` - Launches the test runner
-- `npm run eject` - Removes the single build dependency
-
-## Project Structure
-
-```
-frontend/
-├── public/
-│   ├── index.html
-│   └── manifest.json
-├── src/
-│   ├── components/
-│   │   ├── Dashboard.js
-│   │   ├── Home.js
-│   │   ├── Navbar.js
-│   │   └── Users.js
-│   ├── App.js
-│   ├── index.js
-│   └── index.css
-├── package.json
-└── README.md
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Configuration
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-The frontend is configured to work with the backend API running on `http://localhost:4000`. This is set up through the proxy configuration in `package.json`.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Authentication Flow
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-1. User clicks "Login with Google" on the home page
-2. User is redirected to Google OAuth
-3. After successful authentication, user is redirected back to the frontend
-4. Frontend checks authentication status and redirects to dashboard
-5. Protected routes are accessible only to authenticated users
+## Learn More
 
-## Components
+To learn more about Next.js, take a look at the following resources:
 
-- **App.js** - Main application component with routing
-- **Navbar.js** - Navigation component with user info and logout
-- **Home.js** - Landing page for unauthenticated users
-- **Dashboard.js** - User dashboard with profile information
-- **Users.js** - User management interface
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
