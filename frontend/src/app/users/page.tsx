@@ -3,6 +3,8 @@
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Toast } from '@/components/ui/toast';
+import { useToast } from '@/lib/useToast';
 import { LogOut, Users, Database, Trash2, Edit, Mail, Calendar, Shield, RefreshCw, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -28,6 +30,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [usersLoading, setUsersLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { toast, showSuccess, showError, hideToast } = useToast();
 
   useEffect(() => {
     if (!user && !loading) {
@@ -41,9 +44,14 @@ export default function UsersPage() {
       setError(null);
       const response = await axios.get('/api/users');
       setUsers(response.data.users);
+      // Only show success toast when manually refreshing, not on initial load
+      if (users.length > 0) {
+        showSuccess('Refreshed!', `Loaded ${response.data.users.length} users successfully.`);
+      }
     } catch (error) {
       console.error('Error fetching users:', error);
       setError('Failed to load users. Please try again.');
+      showError('Error', 'Failed to load users. Please try again.');
     } finally {
       setUsersLoading(false);
     }
@@ -63,17 +71,19 @@ export default function UsersPage() {
     try {
       await axios.delete(`/api/users/${userId}`);
       setUsers(users.filter(u => u.id !== userId));
+      showSuccess('User Deleted!', 'User has been successfully deleted.');
     } catch (error) {
       console.error('Error deleting user:', error);
       setError('Failed to delete user. Please try again.');
+      showError('Delete Failed', 'Failed to delete user. Please try again.');
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto"></div>
           <p className="mt-4 text-lg text-gray-600">Loading...</p>
         </div>
       </div>
@@ -85,31 +95,42 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
+      <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Database className="h-8 w-8 text-blue-600 mr-2" />
-              <span className="text-xl font-bold text-gray-900">TypeORM CRUD</span>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl">
+                  <Database className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  TypeORM CRUD
+                </span>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <Link href="/dashboard">
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button variant="outline" className="flex items-center gap-2 shadow-md">
                   <ArrowLeft className="h-4 w-4" />
                   Dashboard
                 </Button>
               </Link>
-              {user.profilePicture && (
-                <img
-                  src={user.profilePicture}
-                  alt="Profile"
-                  className="h-8 w-8 rounded-full"
-                />
-              )}
-              <span className="text-sm text-gray-700">Hi, {user.firstName}!</span>
-              <Button onClick={logout} variant="destructive" size="sm">
+              <div className="flex items-center space-x-3">
+                {user.profilePicture && (
+                  <div className="relative">
+                    <img
+                      src={user.profilePicture}
+                      alt="Profile"
+                      className="h-9 w-9 rounded-full ring-2 ring-blue-200"
+                    />
+                    <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-400 rounded-full border-2 border-white"></div>
+                  </div>
+                )}
+                <span className="text-sm font-medium text-gray-700">Hi, {user.firstName}!</span>
+              </div>
+              <Button onClick={logout} variant="destructive" size="sm" className="shadow-md">
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
@@ -119,47 +140,68 @@ export default function UsersPage() {
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <Users className="h-8 w-8" />
-              User Management
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Manage all registered users in the system
-            </p>
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center p-3 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full mb-6">
+            <Users className="h-8 w-8 text-blue-600" />
           </div>
-          <Button onClick={fetchUsers} variant="outline" className="flex items-center gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Refresh
-          </Button>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">User Management</h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Manage all users in your application with full CRUD operations.
+          </p>
+        </div>
+
+        {/* Controls */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex gap-3">
+            <Button 
+              onClick={fetchUsers} 
+              variant="outline" 
+              className="flex items-center gap-2 shadow-md hover:shadow-lg transition-shadow"
+              disabled={usersLoading}
+            >
+              <RefreshCw className={`h-4 w-4 ${usersLoading ? 'animate-spin' : ''}`} />
+              {usersLoading ? 'Refreshing...' : 'Refresh Users'}
+            </Button>
+            <Button 
+              onClick={() => showSuccess('Test Toast!', 'This is a test notification to verify the toast system is working.')}
+              variant="ghost" 
+              className="flex items-center gap-2"
+            >
+              Test Toast
+            </Button>
+          </div>
         </div>
 
         {/* Stats Card */}
-        <Card className="mb-8">
+        <Card className="mb-8 group hover:scale-[1.01] transition-transform duration-300">
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
-            <CardDescription>User statistics and summary</CardDescription>
+            <CardTitle className="text-2xl flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg group-hover:from-blue-200 group-hover:to-blue-300 transition-colors">
+                <Database className="h-6 w-6 text-blue-600" />
+              </div>
+              Overview
+            </CardTitle>
+            <CardDescription className="text-base">User statistics and summary</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">{users.length}</div>
-                <div className="text-sm text-gray-600">Total Users</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center bg-blue-50 p-6 rounded-xl">
+                <div className="text-4xl font-bold text-blue-600 mb-2">{users.length}</div>
+                <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Users</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-600">
+              <div className="text-center bg-green-50 p-6 rounded-xl">
+                <div className="text-4xl font-bold text-green-600 mb-2">
                   {users.filter(u => u.isActive).length}
                 </div>
-                <div className="text-sm text-gray-600">Active Users</div>
+                <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Active Users</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600">
+              <div className="text-center bg-purple-50 p-6 rounded-xl">
+                <div className="text-4xl font-bold text-purple-600 mb-2">
                   {users.filter(u => u.provider === 'google').length}
                 </div>
-                <div className="text-sm text-gray-600">Google Users</div>
+                <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Google Users</div>
               </div>
             </div>
           </CardContent>
@@ -167,109 +209,125 @@ export default function UsersPage() {
 
         {/* Error Message */}
         {error && (
-          <Card className="mb-6 border-red-200 bg-red-50">
+          <Card className="mb-6 border-red-300 bg-red-50 shadow-lg">
             <CardContent className="pt-6">
-              <div className="text-red-600">{error}</div>
+              <div className="text-red-700 font-medium text-center py-4">{error}</div>
             </CardContent>
           </Card>
         )}
 
         {/* Loading State */}
         {usersLoading ? (
-          <Card>
-            <CardContent className="pt-6">
+          <Card className="shadow-lg">
+            <CardContent className="pt-12 pb-12">
               <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-4 text-gray-600">Loading users...</p>
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto"></div>
+                <p className="mt-4 text-lg text-gray-600">Loading users...</p>
               </div>
             </CardContent>
           </Card>
         ) : users.length === 0 ? (
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center py-8">
-                <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No users found.</p>
+          <Card className="shadow-lg">
+            <CardContent className="pt-12 pb-12">
+              <div className="text-center py-12">
+                <div className="p-4 bg-gray-100 rounded-full w-fit mx-auto mb-4">
+                  <Users className="h-12 w-12 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No users found</h3>
+                <p className="text-gray-600">There are no users registered in the system yet.</p>
               </div>
             </CardContent>
           </Card>
         ) : (
           /* Users Grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {users.map((userData) => (
-              <Card key={userData.id} className="hover:shadow-lg transition-shadow">
+              <Card key={userData.id} className="group hover:scale-105 hover:shadow-xl transition-all duration-300">
                 <CardHeader className="pb-4">
                   <div className="flex items-center space-x-4">
                     {userData.profilePicture && (
-                      <img
-                        src={userData.profilePicture}
-                        alt="Profile"
-                        className="h-12 w-12 rounded-full border"
-                      />
+                      <div className="relative">
+                        <img
+                          src={userData.profilePicture}
+                          alt="Profile"
+                          className="h-16 w-16 rounded-full border-4 border-white shadow-lg"
+                        />
+                        <div className={`absolute -bottom-2 -right-2 h-4 w-4 rounded-full border-2 border-white ${userData.isActive ? 'bg-green-400' : 'bg-gray-400'}`}></div>
+                      </div>
                     )}
                     <div className="flex-1">
-                      <CardTitle className="text-lg">
+                      <CardTitle className="text-xl font-bold text-gray-900">
                         {userData.firstName} {userData.lastName}
                       </CardTitle>
-                      <CardDescription className="flex items-center gap-1">
-                        <Mail className="h-3 w-3" />
+                      <CardDescription className="flex items-center gap-2 text-base">
+                        <Mail className="h-4 w-4 text-blue-600" />
                         {userData.email}
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Provider:</span>
-                      <span className="flex items-center gap-1">
-                        <Shield className="h-3 w-3" />
-                        {userData.provider}
-                      </span>
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-semibold text-gray-500 uppercase tracking-wide">Provider:</span>
+                        <span className="flex items-center gap-2 font-medium">
+                          <Shield className="h-4 w-4 text-blue-600" />
+                          {userData.provider}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Status:</span>
-                      <span className={`flex items-center gap-1 ${userData.isActive ? 'text-green-600' : 'text-red-600'}`}>
-                        <div className={`h-2 w-2 rounded-full ${userData.isActive ? 'bg-green-600' : 'bg-red-600'}`}></div>
-                        {userData.isActive ? 'Active' : 'Inactive'}
-                      </span>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-semibold text-gray-500 uppercase tracking-wide">Status:</span>
+                        <span className={`flex items-center gap-2 font-medium ${userData.isActive ? 'text-green-600' : 'text-red-600'}`}>
+                          <div className={`h-3 w-3 rounded-full ${userData.isActive ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                          {userData.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </div>
                     </div>
                     {userData.age && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500">Age:</span>
-                        <span>{userData.age}</span>
+                      <div className="bg-gray-50 p-3 rounded-lg">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="font-semibold text-gray-500 uppercase tracking-wide">Age:</span>
+                          <span className="font-medium">{userData.age}</span>
+                        </div>
                       </div>
                     )}
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Joined:</span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(userData.createdAt).toLocaleDateString()}
-                      </span>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-semibold text-gray-500 uppercase tracking-wide">Joined:</span>
+                        <span className="flex items-center gap-2 font-medium">
+                          <Calendar className="h-4 w-4 text-purple-600" />
+                          {new Date(userData.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">User ID:</span>
-                      <span className="font-mono">#{userData.id}</span>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-semibold text-gray-500 uppercase tracking-wide">User ID:</span>
+                        <span className="font-mono font-bold text-gray-700">#{userData.id}</span>
+                      </div>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2 mt-4 pt-4 border-t">
+                  <div className="flex gap-3 mt-6 pt-4 border-t">
                     <Button
                       size="sm"
                       variant="outline"
-                      className="flex-1"
+                      className="flex-1 shadow-md hover:shadow-lg transition-shadow"
                     >
-                      <Edit className="h-3 w-3 mr-1" />
+                      <Edit className="h-4 w-4 mr-2" />
                       Edit
                     </Button>
                     <Button
                       size="sm"
                       variant="destructive"
                       onClick={() => deleteUser(userData.id)}
-                      className="flex-1"
+                      className="flex-1 shadow-md hover:shadow-lg transition-shadow"
                     >
-                      <Trash2 className="h-3 w-3 mr-1" />
+                      <Trash2 className="h-4 w-4 mr-2" />
                       Delete
                     </Button>
                   </div>
@@ -279,6 +337,16 @@ export default function UsersPage() {
           </div>
         )}
       </div>
+
+      {/* Toast Notifications */}
+      {toast && (
+        <Toast
+          title={toast.title}
+          description={toast.description}
+          variant={toast.variant}
+          onClose={hideToast}
+        />
+      )}
     </div>
   );
 }
