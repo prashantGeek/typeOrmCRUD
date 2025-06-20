@@ -194,22 +194,26 @@ export default function Dashboard() {
                   </div>
                 </Button>
               </Link>
-              <Button className="w-full justify-start h-12 text-left shadow-md hover:shadow-lg transition-shadow" variant="outline">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <User className="h-4 w-4 text-purple-600" />
+              <Link href="/profile">
+                <Button className="w-full justify-start h-12 text-left shadow-md hover:shadow-lg transition-shadow" variant="outline">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-100 rounded-lg">
+                      <User className="h-4 w-4 text-purple-600" />
+                    </div>
+                    <span>Edit Profile</span>
                   </div>
-                  <span>Edit Profile</span>
-                </div>
-              </Button>
-              <Button className="w-full justify-start h-12 text-left shadow-md hover:shadow-lg transition-shadow" variant="outline">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-orange-100 rounded-lg">
-                    <Settings className="h-4 w-4 text-orange-600" />
+                </Button>
+              </Link>
+              <Link href="/settings">
+                <Button className="w-full justify-start h-12 text-left shadow-md hover:shadow-lg transition-shadow" variant="outline">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-100 rounded-lg">
+                      <Settings className="h-4 w-4 text-orange-600" />
+                    </div>
+                    <span>Account Settings</span>
                   </div>
-                  <span>Account Settings</span>
-                </div>
-              </Button>
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>

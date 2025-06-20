@@ -6,6 +6,9 @@ A modern full-stack web application featuring Google OAuth authentication, user 
 
 - **Google OAuth Authentication**: Secure login using Google OAuth 2.0
 - **User Management**: Complete CRUD operations for user management
+- **Profile Management**: Edit user profiles with real-time updates
+- **Account Settings**: Comprehensive account management and security settings
+- **Inline Editing**: Edit user information directly in the users list
 - **Modern Frontend**: Next.js 15 with TypeScript and Tailwind CSS
 - **Database Integration**: PostgreSQL with TypeORM ORM
 - **Session Management**: Secure session handling with express-session
@@ -146,6 +149,8 @@ typeOrmCRUD/
 │   ├── src/
 │   │   ├── app/             # Next.js App Router pages
 │   │   │   ├── dashboard/   # Dashboard page
+│   │   │   ├── profile/     # Profile editing page
+│   │   │   ├── settings/    # Account settings page
 │   │   │   ├── users/       # Users management page
 │   │   │   ├── layout.tsx   # Root layout
 │   │   │   └── page.tsx     # Home page
@@ -201,9 +206,11 @@ typeOrmCRUD/
 
 1. **Home Page**: Landing page with login option
 2. **Authentication**: Click "Login with Google" to authenticate
-3. **Dashboard**: Overview of application features (after login)
-4. **Users Page**: Manage users with CRUD operations (after login)
-5. **Logout**: Secure logout with session cleanup
+3. **Dashboard**: Overview of application features with quick actions (after login)
+4. **Profile Management**: Edit your personal information and update profile details
+5. **Account Settings**: Manage account preferences, view security info, and account deletion
+6. **Users Page**: Manage all users with CRUD operations including inline editing (after login)
+7. **Logout**: Secure logout with session cleanup
 
 ## 🤝 Contributing
 

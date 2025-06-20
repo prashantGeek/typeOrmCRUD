@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Toast } from '@/components/ui/toast';
 import { useToast } from '@/lib/useToast';
-import { LogOut, Users, Database, Trash2, Edit, Mail, Calendar, Shield, RefreshCw, ArrowLeft } from 'lucide-react';
+import { LogOut, Users, Database, Trash2, Edit, Mail, Calendar, Shield, RefreshCw, ArrowLeft, Save, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -30,6 +30,13 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [usersLoading, setUsersLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editForm, setEditForm] = useState({
+    firstName: '',
+    lastName: '',
+    age: ''
+  });
+  const [saving, setSaving] = useState(false);
   const { toast, showSuccess, showError, hideToast } = useToast();
 
   useEffect(() => {
@@ -76,6 +83,52 @@ export default function UsersPage() {
       console.error('Error deleting user:', error);
       setError('Failed to delete user. Please try again.');
       showError('Delete Failed', 'Failed to delete user. Please try again.');
+    }
+  };
+
+  const startEditUser = (userData: User) => {
+    setEditingUser(userData);
+    setEditForm({
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      age: userData.age?.toString() || ''
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingUser(null);
+    setEditForm({
+      firstName: '',
+      lastName: '',
+      age: ''
+    });
+  };
+
+  const saveUser = async () => {
+    if (!editingUser) return;
+
+    try {
+      setSaving(true);
+      const updateData: any = {
+        firstName: editForm.firstName,
+        lastName: editForm.lastName
+      };
+
+      if (editForm.age) {
+        updateData.age = parseInt(editForm.age);
+      }
+
+      const response = await axios.put(`/api/users/${editingUser.id}`, updateData);
+      
+      // Update the users list with the updated user
+      setUsers(users.map(u => u.id === editingUser.id ? response.data.updatedUser : u));
+      setEditingUser(null);
+      showSuccess('User Updated!', 'User has been successfully updated.');
+    } catch (error) {
+      console.error('Error updating user:', error);
+      showError('Update Failed', 'Failed to update user. Please try again.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -256,13 +309,40 @@ export default function UsersPage() {
                       </div>
                     )}
                     <div className="flex-1">
-                      <CardTitle className="text-xl font-bold text-gray-900">
-                        {userData.firstName} {userData.lastName}
-                      </CardTitle>
-                      <CardDescription className="flex items-center gap-2 text-base">
-                        <Mail className="h-4 w-4 text-blue-600" />
-                        {userData.email}
-                      </CardDescription>
+                      {editingUser?.id === userData.id ? (
+                        <div className="space-y-3">
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={editForm.firstName}
+                              onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
+                              className="flex-1 text-lg font-bold text-gray-900 bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="First Name"
+                            />
+                            <input
+                              type="text"
+                              value={editForm.lastName}
+                              onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
+                              className="flex-1 text-lg font-bold text-gray-900 bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Last Name"
+                            />
+                          </div>
+                          <CardDescription className="flex items-center gap-2 text-base">
+                            <Mail className="h-4 w-4 text-blue-600" />
+                            {userData.email}
+                          </CardDescription>
+                        </div>
+                      ) : (
+                        <>
+                          <CardTitle className="text-xl font-bold text-gray-900">
+                            {userData.firstName} {userData.lastName}
+                          </CardTitle>
+                          <CardDescription className="flex items-center gap-2 text-base">
+                            <Mail className="h-4 w-4 text-blue-600" />
+                            {userData.email}
+                          </CardDescription>
+                        </>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
@@ -286,11 +366,21 @@ export default function UsersPage() {
                         </span>
                       </div>
                     </div>
-                    {userData.age && (
+                    {(userData.age || editingUser?.id === userData.id) && (
                       <div className="bg-gray-50 p-3 rounded-lg">
                         <div className="flex items-center justify-between text-sm">
                           <span className="font-semibold text-gray-500 uppercase tracking-wide">Age:</span>
-                          <span className="font-medium">{userData.age}</span>
+                          {editingUser?.id === userData.id ? (
+                            <input
+                              type="number"
+                              value={editForm.age}
+                              onChange={(e) => setEditForm({ ...editForm, age: e.target.value })}
+                              className="w-20 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Age"
+                            />
+                          ) : (
+                            <span className="font-medium">{userData.age || 'Not set'}</span>
+                          )}
                         </div>
                       </div>
                     )}
@@ -313,23 +403,49 @@ export default function UsersPage() {
 
                   {/* Action Buttons */}
                   <div className="flex gap-3 mt-6 pt-4 border-t">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1 shadow-md hover:shadow-lg transition-shadow"
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => deleteUser(userData.id)}
-                      className="flex-1 shadow-md hover:shadow-lg transition-shadow"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </Button>
+                    {editingUser?.id === userData.id ? (
+                      <>
+                        <Button
+                          size="sm"
+                          onClick={saveUser}
+                          disabled={saving}
+                          className="flex-1 shadow-md hover:shadow-lg transition-shadow"
+                        >
+                          <Save className="h-4 w-4 mr-2" />
+                          {saving ? 'Saving...' : 'Save'}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={cancelEdit}
+                          className="flex-1 shadow-md hover:shadow-lg transition-shadow"
+                        >
+                          <X className="h-4 w-4 mr-2" />
+                          Cancel
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => startEditUser(userData)}
+                          className="flex-1 shadow-md hover:shadow-lg transition-shadow"
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => deleteUser(userData.id)}
+                          className="flex-1 shadow-md hover:shadow-lg transition-shadow"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </CardContent>
               </Card>
