@@ -217,13 +217,6 @@ export default function UsersPage() {
               <RefreshCw className={`h-4 w-4 ${usersLoading ? 'animate-spin' : ''}`} />
               {usersLoading ? 'Refreshing...' : 'Refresh Users'}
             </Button>
-            <Button 
-              onClick={() => showSuccess('Test Toast!', 'This is a test notification to verify the toast system is working.')}
-              variant="ghost" 
-              className="flex items-center gap-2"
-            >
-              Test Toast
-            </Button>
           </div>
         </div>
 
