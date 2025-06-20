@@ -310,20 +310,20 @@ export default function UsersPage() {
                     )}
                     <div className="flex-1">
                       {editingUser?.id === userData.id ? (
-                        <div className="space-y-3">
-                          <div className="flex gap-2">
+                        <div className="space-y-3 w-full">
+                          <div className="grid grid-cols-1 gap-2">
                             <input
                               type="text"
                               value={editForm.firstName}
                               onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
-                              className="flex-1 text-lg font-bold text-gray-900 bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full text-lg font-bold text-gray-900 bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="First Name"
                             />
                             <input
                               type="text"
                               value={editForm.lastName}
                               onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
-                              className="flex-1 text-lg font-bold text-gray-900 bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full text-lg font-bold text-gray-900 bg-white border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="Last Name"
                             />
                           </div>
