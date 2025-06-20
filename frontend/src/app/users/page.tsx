@@ -340,8 +340,8 @@ export default function UsersPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="bg-gray-50 p-3 rounded-lg">
+                  <div className="space-y-6">
+                    <div className="bg-gray-50 p-4 rounded-lg">
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-semibold text-gray-500 uppercase tracking-wide">Provider:</span>
                         <span className="flex items-center gap-2 font-medium">
@@ -350,7 +350,8 @@ export default function UsersPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
+                    
+                    <div className="bg-gray-50 p-4 rounded-lg">
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-semibold text-gray-500 uppercase tracking-wide">Status:</span>
                         <span className={`flex items-center gap-2 font-medium ${userData.isActive ? 'text-green-600' : 'text-red-600'}`}>
@@ -359,8 +360,9 @@ export default function UsersPage() {
                         </span>
                       </div>
                     </div>
+                    
                     {(userData.age || editingUser?.id === userData.id) && (
-                      <div className="bg-gray-50 p-3 rounded-lg">
+                      <div className="bg-gray-50 p-4 rounded-lg">
                         <div className="flex items-center justify-between text-sm">
                           <span className="font-semibold text-gray-500 uppercase tracking-wide">Age:</span>
                           {editingUser?.id === userData.id ? (
@@ -377,7 +379,8 @@ export default function UsersPage() {
                         </div>
                       </div>
                     )}
-                    <div className="bg-gray-50 p-3 rounded-lg">
+                    
+                    <div className="bg-gray-50 p-4 rounded-lg">
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-semibold text-gray-500 uppercase tracking-wide">Joined:</span>
                         <span className="flex items-center gap-2 font-medium">
@@ -386,7 +389,8 @@ export default function UsersPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
+                    
+                    <div className="bg-gray-50 p-4 rounded-lg">
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-semibold text-gray-500 uppercase tracking-wide">User ID:</span>
                         <span className="font-mono font-bold text-gray-700">#{userData.id}</span>
@@ -395,14 +399,14 @@ export default function UsersPage() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3 mt-6 pt-4 border-t">
+                  <div className="flex gap-4 mt-8 pt-6 border-t border-gray-200">
                     {editingUser?.id === userData.id ? (
                       <>
                         <Button
                           size="sm"
                           onClick={saveUser}
                           disabled={saving}
-                          className="flex-1 shadow-md hover:shadow-lg transition-shadow"
+                          className="flex-1 shadow-md hover:shadow-lg transition-all duration-200"
                         >
                           <Save className="h-4 w-4 mr-2" />
                           {saving ? 'Saving...' : 'Save'}
@@ -411,7 +415,7 @@ export default function UsersPage() {
                           size="sm"
                           variant="outline"
                           onClick={cancelEdit}
-                          className="flex-1 shadow-md hover:shadow-lg transition-shadow"
+                          className="flex-1 shadow-md hover:shadow-lg transition-all duration-200"
                         >
                           <X className="h-4 w-4 mr-2" />
                           Cancel
@@ -423,7 +427,7 @@ export default function UsersPage() {
                           size="sm"
                           variant="outline"
                           onClick={() => startEditUser(userData)}
-                          className="flex-1 shadow-md hover:shadow-lg transition-shadow"
+                          className="flex-1 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105"
                         >
                           <Edit className="h-4 w-4 mr-2" />
                           Edit
@@ -432,7 +436,7 @@ export default function UsersPage() {
                           size="sm"
                           variant="destructive"
                           onClick={() => deleteUser(userData.id)}
-                          className="flex-1 shadow-md hover:shadow-lg transition-shadow"
+                          className="flex-1 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           Delete
