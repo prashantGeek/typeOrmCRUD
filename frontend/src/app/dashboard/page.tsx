@@ -194,7 +194,7 @@ export default function Dashboard() {
                   </div>
                 </Button>
               </Link>
-              <Link href="/profile">
+                <Link href="/profile">
                 <Button className="w-full justify-start h-12 text-left shadow-md hover:shadow-lg transition-shadow" variant="outline">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-purple-100 rounded-lg">
